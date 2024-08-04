@@ -59,7 +59,7 @@ func TestInsert(t *testing.T) {
 			School:     lo.ToPtr(faker.UUIDHyphenated()),
 		}
 	}
-	Convey(fmt.Sprintf("Insert a %d records", documentCount), t, func() {
+	Convey(fmt.Sprintf("Insert %d records", documentCount), t, func() {
 		Benchmark(Driver, Elemental, 1)
 	})
 }
