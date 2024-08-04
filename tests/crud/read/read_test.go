@@ -16,37 +16,28 @@ import (
 )
 
 var (
-	documentCount = 500
+	documentCount = 10000
 	data          = make([]User, documentCount)
 )
 
 func Driver() {
 	ctx := context.Background()
 	client := e_connection.GetConnection()
-	for i := range data {
-		_, err := client.Database(mocks.DEFAULT_DB).Collection("users").InsertOne(ctx, data[i])
-		if err != nil {
-			panic(err)
-		}
-	}
-	count, err := client.Database(mocks.DEFAULT_DB).Collection("users").CountDocuments(ctx, map[string]interface{}{})
+	docs := make([]interface{}, documentCount)
+	cursor, err := client.Database(mocks.DEFAULT_DB).Collection("users").Find(ctx, map[string]interface{}{})
 	if err != nil {
 		panic(err)
 	}
-	So(count, ShouldEqual, documentCount)
-	client.Database(mocks.DEFAULT_DB).Drop(ctx)
+	cursor.All(ctx, &docs)
+	So(len(docs), ShouldEqual, documentCount)
 }
 
 func Elemental() {
-	for i := range data {
-		UserModel.Create(data[i]).Exec()
-	}
-	count := UserModel.CountDocuments().Exec()
-	So(count, ShouldEqual, documentCount)
-	UserModel.Drop()
+	docs := UserModel.Find().Exec().([]User)
+	So(len(docs), ShouldEqual, documentCount)
 }
 
-func TestInsert(t *testing.T) {
+func TestRead(t *testing.T) {
 	setup.Connection()
 	defer setup.Teardown()
 	for i := range data {
@@ -59,7 +50,8 @@ func TestInsert(t *testing.T) {
 			School:     lo.ToPtr(faker.UUIDHyphenated()),
 		}
 	}
-	Convey(fmt.Sprintf("Insert a %d records", documentCount), t, func() {
-		Benchmark(Driver, Elemental, 1)
+	UserModel.InsertMany(data).Exec()
+	Convey(fmt.Sprintf("Read %d records", documentCount), t, func() {
+		Benchmark(Driver, Elemental, 10)
 	})
 }
