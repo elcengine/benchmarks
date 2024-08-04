@@ -12,6 +12,7 @@ require (
 require (
 	github.com/creasty/defaults v1.7.0 // indirect
 	github.com/gertd/go-pluralize v0.2.1 // indirect
+	github.com/go-faker/faker/v4 v4.4.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect

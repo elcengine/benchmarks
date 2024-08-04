@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func ConnectDriver() {
+func Driver() {
 	ctx := context.Background()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mocks.DB_URI))
 	if err != nil {
@@ -27,7 +27,7 @@ func ConnectDriver() {
 	client.Disconnect(ctx)
 }
 
-func ConnectElemental() {
+func Elemental() {
 	client := e_connection.ConnectURI(mocks.DB_URI)
 	So(client, ShouldNotBeNil)
 	client.Disconnect(context.Background())
@@ -35,6 +35,6 @@ func ConnectElemental() {
 
 func TestConnection(t *testing.T) {
 	Convey("Connect to a database on Atlas", t, func() {
-		Benchmark(ConnectDriver, ConnectElemental)
+		Benchmark(Driver, Elemental)
 	})
 }
